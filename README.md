@@ -205,22 +205,29 @@ server.port=8080
 
 ## 🌐 Principais Rotas (Web) e Endpoints
 
-Rotas Web (JSP):
+### Rotas Web (JSP):
 
-- GET /clientes — lista clientes
-- GET /clientes/novo — formulário de criação
-- POST /clientes — criação
-- GET /clientes/{id}/editar — formulário de edição
-- POST/PUT /clientes/{id} — atualização
-- POST/DELETE /clientes/{id}/excluir — exclusão
+- `GET /clientes` — lista clientes
+- `GET /clientes/novo` — formulário de criação
+- `POST /clientes/salvar` — criação
+- `GET /clientes/editar/{id}` — formulário de edição
+- `POST /clientes/salvar` — atualização
+- `GET /clientes/excluir/{id}` — exclusão
 
-API REST (se exposta):
+### API REST:
 
-- GET /api/clientes
-- GET /api/clientes/{id}
-- POST /api/clientes
-- PUT /api/clientes/{id}
-- DELETE /api/clientes/{id}
+- `GET /api/clientes` — lista todos os clientes
+- `GET /api/clientes/{id}` — busca cliente por ID
+- `POST /api/clientes` — cria novo cliente
+- `PUT /api/clientes/{id}` — atualiza cliente
+- `DELETE /api/clientes/{id}` — exclui cliente
+
+### Health Check:
+
+- `GET /api/health` — status completo do sistema
+- `GET /api/health/ping` — verificação rápida
+- `GET /api/health/ready` — readiness probe
+- `GET /api/health/live` — liveness probe
 
 Observação: Caso o projeto não disponibilize a API REST, utilize apenas as rotas Web.
 
@@ -389,3 +396,57 @@ Defina a licença do projeto (ex.: MIT) e inclua o arquivo LICENSE na raiz.
 - Docker Get Started: https://docs.docker.com/get-started/
 
 ---
+
+## 📡 Exemplos de Uso da API REST
+
+### Listar todos os clientes
+
+```bash
+curl -X GET http://localhost:8080/api/clientes
+```
+
+### Buscar cliente por ID
+
+```bash
+curl -X GET http://localhost:8080/api/clientes/1
+```
+
+### Criar novo cliente
+
+```bash
+curl -X POST http://localhost:8080/api/clientes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nome": "João Silva",
+    "cpf": "123.456.789-01",
+    "dataNascimento": "1990-01-01",
+    "contatos": [
+      {"telefone": "(11) 98765-4321", "tipo": "Celular"}
+    ],
+    "emails": [
+      {"endereco": "joao@example.com", "tipo": "Pessoal"}
+    ],
+    "endereco": {
+      "rua": "Rua Exemplo",
+      "numero": "123",
+      "bairro": "Centro",
+      "cep": "01234-567",
+      "cidade": "São Paulo",
+      "estado": "SP"
+    }
+  }'
+```
+
+### Atualizar cliente
+
+```bash
+curl -X PUT http://localhost:8080/api/clientes/1 \
+  -H "Content-Type: application/json" \
+  -d '{...}'
+```
+
+### Excluir cliente
+
+```bash
+curl -X DELETE http://localhost:8080/api/clientes/1
+```
