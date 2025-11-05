@@ -100,6 +100,23 @@ Observação: Em projetos com JSP é comum usar src/main/webapp/WEB-INF/jsp. Cas
 
 ## ⚡ Quick Start
 
+### Configuração Inicial
+
+1. **Copiar arquivo de ambiente:**
+
+```bash
+cp .env.example .env
+```
+
+2. **Editar `.env` com suas configurações locais:**
+
+```bash
+# Edite o arquivo .env com suas credenciais
+nano .env  # ou seu editor preferido
+```
+
+⚠️ **IMPORTANTE:** Nunca commite o arquivo `.env` com credenciais reais!
+
 ### Opção A) Executar com Docker (recomendado)
 
 1. Clonar o repositório:
