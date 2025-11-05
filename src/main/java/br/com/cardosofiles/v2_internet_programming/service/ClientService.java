@@ -1,58 +1,72 @@
 package br.com.cardosofiles.v2_internet_programming.service;
 
 import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import br.com.cardosofiles.v2_internet_programming.model.Client;
 import br.com.cardosofiles.v2_internet_programming.repository.ClientRepository;
 
 @Service
 public class ClientService {
 
-    private final ClientRepository repository;
+    @Autowired
+    private ClientRepository clientRepository;
 
-    public ClientService(ClientRepository repository) {
-        this.repository = repository;
+    public List<Client> listarTodos() {
+        return clientRepository.findAll();
     }
 
-    public List<Client> listar() {
-        return repository.findAll();
-    }
+    @Transactional(readOnly = true)
+    public Optional<Client> buscarPorId(Long id) {
+        // Carregar em 3 queries separadas para evitar MultipleBagFetchException
+        Optional<Client> clientOpt = clientRepository.findByIdWithEndereco(id);
 
-    public Client buscarPorId(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
-    }
-
-    public Client salvar(Client cliente) {
-        validarCliente(cliente);
-        return repository.save(cliente);
-    }
-
-    public void excluir(Long id) {
-        if (!repository.existsById(id)) {
-            throw new RuntimeException("Cliente não encontrado");
+        if (clientOpt.isPresent()) {
+            // Força o carregamento de contatos
+            clientRepository.findByIdWithContatos(id);
+            // Força o carregamento de emails
+            clientRepository.findByIdWithEmails(id);
         }
-        repository.deleteById(id);
+
+        return clientOpt;
     }
 
-    private void validarCliente(Client cliente) {
-        // Validar email duplicado
-        if (cliente.getId() == null) {
-            // Novo cliente
-            if (repository.findByEmail(cliente.getEmail()).isPresent()) {
-                throw new RuntimeException("Já existe um cliente cadastrado com este email");
-            }
-            if (repository.findByTelefone(cliente.getTelefone()).isPresent()) {
-                throw new RuntimeException("Já existe um cliente cadastrado com este telefone");
+    @Transactional
+    public Client salvar(Client client) {
+        validarCpfUnico(client);
+        validarContatosMinimos(client);
+        validarEmailsMinimos(client);
+        return clientRepository.save(client);
+    }
+
+    @Transactional
+    public void excluir(Long id) {
+        clientRepository.deleteById(id);
+    }
+
+    private void validarCpfUnico(Client client) {
+        if (client.getId() == null) {
+            if (clientRepository.findByCpf(client.getCpf()).isPresent()) {
+                throw new IllegalArgumentException("CPF já cadastrado");
             }
         } else {
-            // Cliente existente (edição)
-            if (repository.existsByEmailAndIdNot(cliente.getEmail(), cliente.getId())) {
-                throw new RuntimeException("Já existe outro cliente cadastrado com este email");
+            if (clientRepository.existsByCpfAndIdNot(client.getCpf(), client.getId())) {
+                throw new IllegalArgumentException("CPF já cadastrado para outro cliente");
             }
-            if (repository.existsByTelefoneAndIdNot(cliente.getTelefone(), cliente.getId())) {
-                throw new RuntimeException("Já existe outro cliente cadastrado com este telefone");
-            }
+        }
+    }
+
+    private void validarContatosMinimos(Client client) {
+        if (client.getContatos() == null || client.getContatos().isEmpty()) {
+            throw new IllegalArgumentException("Pelo menos um contato é obrigatório");
+        }
+    }
+
+    private void validarEmailsMinimos(Client client) {
+        if (client.getEmails() == null || client.getEmails().isEmpty()) {
+            throw new IllegalArgumentException("Pelo menos um email é obrigatório");
         }
     }
 }

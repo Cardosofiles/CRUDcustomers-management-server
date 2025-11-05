@@ -1,6 +1,7 @@
 <!-- filepath: /home/cardosofiles/www/github/faculty/v2-internet-programming/src/main/webapp/WEB-INF/jsp/listar.jsp -->
 <%@ page contentType="text/html;charset=UTF-8" language="java" %> <%@ taglib
-prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> <%@ page
+import="java.time.format.DateTimeFormatter" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
@@ -16,13 +17,13 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #667eea 0%, #444444 100%);
         min-height: 100vh;
         padding: 20px;
       }
 
       .container {
-        max-width: 1200px;
+        max-width: 1500px;
         margin: 0 auto;
         background: white;
         border-radius: 20px;
@@ -40,7 +41,6 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         -webkit-text-fill-color: transparent;
       }
 
-      /* Alertas */
       .alert {
         padding: 15px 20px;
         border-radius: 10px;
@@ -48,18 +48,6 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         display: flex;
         align-items: center;
         gap: 10px;
-        animation: slideDown 0.3s ease;
-      }
-
-      @keyframes slideDown {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
       }
 
       .alert-success {
@@ -74,10 +62,6 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         color: #721c24;
       }
 
-      .alert-icon {
-        font-size: 24px;
-      }
-
       .header {
         display: flex;
         justify-content: space-between;
@@ -85,22 +69,15 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         margin-bottom: 30px;
       }
 
-      .btn {
+      .btn-primary {
         display: inline-block;
         padding: 12px 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
         text-decoration: none;
         border-radius: 50px;
         font-weight: 600;
         transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-      }
-
-      .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
       }
 
       .btn-primary:hover {
@@ -132,7 +109,6 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         font-weight: 600;
         text-transform: uppercase;
         font-size: 14px;
-        letter-spacing: 1px;
       }
 
       tbody tr {
@@ -142,11 +118,6 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
       tbody tr:hover {
         background: #f8f9ff;
-        transform: scale(1.01);
-      }
-
-      tbody tr:last-child {
-        border-bottom: none;
       }
 
       .actions {
@@ -154,9 +125,8 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         gap: 10px;
       }
 
-      .btn-edit {
-        background: #4caf50;
-        color: white;
+      .btn-edit,
+      .btn-delete {
         padding: 8px 20px;
         border-radius: 20px;
         text-decoration: none;
@@ -164,49 +134,53 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         transition: all 0.3s ease;
       }
 
+      .btn-edit {
+        background: #4caf50;
+        color: white;
+      }
+
       .btn-edit:hover {
         background: #45a049;
-        transform: translateY(-2px);
       }
 
       .btn-delete {
         background: #f44336;
         color: white;
-        padding: 8px 20px;
-        border-radius: 20px;
-        text-decoration: none;
-        font-size: 14px;
-        transition: all 0.3s ease;
       }
 
       .btn-delete:hover {
         background: #da190b;
-        transform: translateY(-2px);
       }
 
-      .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-        color: #999;
+      .contact-list,
+      .email-list {
+        font-size: 13px;
+        color: #666;
       }
 
-      @media (max-width: 768px) {
-        .container {
-          padding: 20px;
-        }
+      .contact-item,
+      .email-item {
+        display: block;
+        padding: 2px 0;
+      }
 
-        table {
-          font-size: 14px;
-        }
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        background: #e9ecef;
+        border-radius: 10px;
+        font-size: 11px;
+        margin-left: 5px;
+      }
 
-        th,
-        td {
-          padding: 10px;
-        }
+      .address-text {
+        font-size: 13px;
+        line-height: 1.4;
+        color: #666;
+      }
 
-        .actions {
-          flex-direction: column;
-        }
+      .address-line {
+        display: block;
       }
     </style>
   </head>
@@ -214,30 +188,28 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <div class="container">
       <h2>📋 Gestão de Clientes</h2>
 
-      <!-- Mensagens de Sucesso -->
       <c:if test="${not empty sucesso}">
         <div class="alert alert-success">
-          <span class="alert-icon">✅</span>
+          <span>✅</span>
           <span>${sucesso}</span>
         </div>
       </c:if>
 
-      <!-- Mensagens de Erro -->
       <c:if test="${not empty erro}">
         <div class="alert alert-error">
-          <span class="alert-icon">❌</span>
+          <span>❌</span>
           <span>${erro}</span>
         </div>
       </c:if>
 
       <div class="header">
         <div></div>
-        <a href="/clientes/novo" class="btn btn-primary">➕ Novo Cliente</a>
+        <a href="/clientes/novo" class="btn-primary">➕ Novo Cliente</a>
       </div>
 
       <c:choose>
         <c:when test="${empty clientes}">
-          <div class="empty-state">
+          <div style="text-align: center; padding: 60px; color: #999">
             <div style="font-size: 80px">📭</div>
             <h3>Nenhum cliente cadastrado</h3>
             <p>Comece adicionando seu primeiro cliente!</p>
@@ -247,20 +219,72 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
           <table>
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Nome</th>
-                <th>Email</th>
-                <th>Telefone</th>
+                <th>CPF</th>
+                <th>Data Nasc.</th>
+                <th>Contatos</th>
+                <th>Emails</th>
+                <th>Endereço Completo</th>
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody>
               <c:forEach var="c" items="${clientes}">
                 <tr>
-                  <td><strong>#${c.id}</strong></td>
-                  <td>${c.nome}</td>
-                  <td>${c.email}</td>
-                  <td>${c.telefone}</td>
+                  <td><strong>${c.nome}</strong></td>
+                  <td>${c.cpf}</td>
+                  <td>
+                    <c:set var="formatter" value="<%=
+                    DateTimeFormatter.ofPattern(\"dd/MM/yyyy\") %>" />
+                    ${c.dataNascimento.format(formatter)}
+                  </td>
+                  <td>
+                    <div class="contact-list">
+                      <c:forEach
+                        var="contato"
+                        items="${c.contatos}"
+                        varStatus="status"
+                      >
+                        <span class="contact-item">
+                          ${contato.telefone}
+                          <span class="badge">${contato.tipo}</span>
+                        </span>
+                      </c:forEach>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="email-list">
+                      <c:forEach
+                        var="email"
+                        items="${c.emails}"
+                        varStatus="status"
+                      >
+                        <span class="email-item">
+                          ${email.endereco}
+                          <span class="badge">${email.tipo}</span>
+                        </span>
+                      </c:forEach>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="address-text">
+                      <span class="address-line"
+                        >${c.endereco.rua}, ${c.endereco.numero}</span
+                      >
+                      <span class="address-line">${c.endereco.bairro}</span>
+                      <c:if test="${not empty c.endereco.complemento}">
+                        <span class="address-line"
+                          >${c.endereco.complemento}</span
+                        >
+                      </c:if>
+                      <span class="address-line">CEP: ${c.endereco.cep}</span>
+                      <span class="address-line"
+                        ><strong
+                          >${c.endereco.cidade}/${c.endereco.estado}</strong
+                        ></span
+                      >
+                    </div>
+                  </td>
                   <td>
                     <div class="actions">
                       <a href="/clientes/editar/${c.id}" class="btn-edit"
@@ -269,9 +293,10 @@ prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
                       <a
                         href="/clientes/excluir/${c.id}"
                         class="btn-delete"
-                        onclick="return confirm('⚠️ Deseja realmente excluir o cliente ${c.nome}?')"
-                        >🗑️ Excluir</a
+                        onclick="return confirm('⚠️ Deseja realmente excluir ${c.nome}?')"
                       >
+                        🗑️ Excluir
+                      </a>
                     </div>
                   </td>
                 </tr>
