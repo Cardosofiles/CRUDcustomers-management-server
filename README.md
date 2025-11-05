@@ -61,17 +61,28 @@ Padrão MVC em camadas:
 src
 └── main
     ├── java
-    │   └── com
-    │       └── exemplo
-    │           ├── config
-    │           ├── controller
-    │           ├── model
-    │           ├── repository
-    │           └── service
-    └── resources
-        ├── static
-        ├── templates
-        └── application.properties
+    │   └── br
+    │       └── com
+    │           └── cardosofiles
+    │               └── CRUDcustomers-management-server
+    │                   ├── config
+    │                   ├── controller
+    │                   ├── model
+    │                   ├── repository
+    │                   └── service
+    ├── resources
+    │   ├── static
+    │   │   ├── css
+    │   │   └── js
+    │   ├── templates
+    │   └── application.properties
+    └── webapp
+        └── WEB-INF
+            └── jsp
+                └── client
+                    ├── list.jsp
+                    ├── form.jsp
+                    └── view.jsp
 ```
 
 Observação: Em projetos com JSP é comum usar src/main/webapp/WEB-INF/jsp. Caso seu projeto utilize templates em resources/templates, mantenha a configuração de ViewResolver coerente.
