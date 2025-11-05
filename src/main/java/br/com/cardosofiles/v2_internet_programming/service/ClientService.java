@@ -14,22 +14,25 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Transactional(readOnly = true)
     public List<Client> listarTodos() {
-        return clientRepository.findAll();
+        List<Client> clients = clientRepository.findAll();
+        // Força o carregamento das coleções lazy dentro da transação
+        clients.forEach(client -> {
+            client.getContatos().size(); // Inicializa contatos
+            client.getEmails().size(); // Inicializa emails
+        });
+        return clients;
     }
 
     @Transactional(readOnly = true)
     public Optional<Client> buscarPorId(Long id) {
-        // Carregar em 3 queries separadas para evitar MultipleBagFetchException
         Optional<Client> clientOpt = clientRepository.findByIdWithEndereco(id);
-
-        if (clientOpt.isPresent()) {
-            // Força o carregamento de contatos
-            clientRepository.findByIdWithContatos(id);
-            // Força o carregamento de emails
-            clientRepository.findByIdWithEmails(id);
-        }
-
+        // Força o carregamento das coleções lazy dentro da transação
+        clientOpt.ifPresent(client -> {
+            client.getContatos().size(); // Inicializa contatos
+            client.getEmails().size(); // Inicializa emails
+        });
         return clientOpt;
     }
 
