@@ -17,7 +17,13 @@ import="java.time.format.DateTimeFormatter" %>
 
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #444444 100%);
+        background: linear-gradient(
+          135deg,
+          #005ed9 0%,
+          #09b6b9 35%,
+          #041021 100%
+        );
+
         min-height: 100vh;
         padding: 20px;
       }
@@ -72,7 +78,12 @@ import="java.time.format.DateTimeFormatter" %>
       .btn-primary {
         display: inline-block;
         padding: 12px 30px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(
+          135deg,
+          #005ed9 0%,
+          #09b6b9 35%,
+          #041021 100%
+        );
         color: white;
         text-decoration: none;
         border-radius: 50px;
@@ -95,7 +106,13 @@ import="java.time.format.DateTimeFormatter" %>
       }
 
       thead {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(
+          135deg,
+          #005ed9 0%,
+          #09b6b9 35%,
+          #041021 100%
+        );
+
         color: white;
       }
 
