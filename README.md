@@ -347,6 +347,83 @@ Sugestão: use Testcontainers para testes de integração com PostgreSQL real.
 
 ---
 
+## Queries SQL Comuns
+
+- Listar todos os clientes:
+
+```sql
+SELECT
+  c.id,
+  c.nome,
+  json_agg(DISTINCT ct.telefone) AS telefones,
+  json_agg(DISTINCT em.endereco) AS emails,
+  e.rua,
+  e.numero,
+  e.bairro,
+  e.cidade,
+  e.estado
+FROM clients c
+LEFT JOIN contatos ct ON ct.client_id = c.id
+LEFT JOIN emails em ON em.client_id = c.id
+LEFT JOIN enderecos e ON e.client_id = c.id
+GROUP BY
+  c.id, c.nome,
+  e.rua, e.numero, e.bairro, e.cidade, e.estado;
+```
+
+- Inserir novo cliente com contatos, emails e endereço (exemplo simplificado):
+
+```sql
+BEGIN;
+
+INSERT INTO clients (nome, cpf, data_nascimento) VALUES
+('João Silva Santos', '123.456.789-01', '1990-05-15'),
+('Maria Oliveira Costa', '234.567.890-12', '1985-08-22'),
+('Pedro Henrique Souza', '345.678.901-23', '1992-11-10'),
+('Ana Carolina Lima', '456.789.012-34', '1988-03-25'),
+('Carlos Eduardo Alves', '567.890.123-45', '1995-07-18');
+
+INSERT INTO enderecos (rua, numero, bairro, cep, cidade, estado, complemento, client_id) VALUES
+('Rua das Flores', '123', 'Centro', '01234-567', 'São Paulo', 'SP', 'Apto 101', 1),
+('Avenida Paulista', '1000', 'Bela Vista', '01310-100', 'São Paulo', 'SP', 'Sala 205', 2),
+('Rua dos Andradas', '456', 'Santa Efigênia', '30110-009', 'Belo Horizonte', 'MG', NULL, 3),
+('Rua Sete de Setembro', '789', 'Centro', '80010-000', 'Curitiba', 'PR', 'Casa', 4),
+('Avenida Atlântica', '2000', 'Copacabana', '22021-001', 'Rio de Janeiro', 'RJ', 'Cobertura', 5);
+
+INSERT INTO contatos (telefone, tipo, client_id) VALUES
+('(11) 98765-4321', 'Celular', 1),
+('(11) 3456-7890', 'Fixo', 1),
+('(11) 99876-5432', 'Celular', 2),
+('(11) 3321-9876', 'Comercial', 2),
+('(31) 98888-7777', 'Celular', 3),
+('(41) 99999-8888', 'Celular', 4),
+('(41) 3222-3333', 'Fixo', 4),
+('(21) 97777-6666', 'Celular', 5);
+
+INSERT INTO emails (endereco, tipo, client_id) VALUES
+('joao.silva@email.com', 'Pessoal', 1),
+('joao.trabalho@empresa.com', 'Comercial', 1),
+('maria.costa@email.com', 'Pessoal', 2),
+('maria@consultoria.com', 'Comercial', 2),
+('pedro.souza@email.com', 'Pessoal', 3),
+('ana.lima@email.com', 'Pessoal', 4),
+('ana.lima@work.com', 'Comercial', 4),
+('carlos.alves@email.com', 'Pessoal', 5);
+
+COMMIT;
+```
+
+- Deletar cliente por ID (cascata remove contatos, emails e endereço):
+
+```sql
+DELETE FROM enderecos;
+DELETE FROM contatos;
+DELETE FROM emails;
+DELETE FROM clients;
+
+ALTER SEQUENCE clients_id_seq RESTART WITH 1;
+```
+
 ## 🐞 Troubleshooting
 
 - Porta 8080 ocupada: ajuste server.port=8081 (ou export SERVER_PORT=8081).
