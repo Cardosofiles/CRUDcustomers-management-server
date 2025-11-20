@@ -27,6 +27,9 @@ public class ClientService {
 
     @Transactional(readOnly = true)
     public Optional<Client> buscarPorId(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         Optional<Client> clientOpt = clientRepository.findByIdWithEndereco(id);
         // Força o carregamento das coleções lazy dentro da transação
         clientOpt.ifPresent(client -> {
@@ -38,6 +41,9 @@ public class ClientService {
 
     @Transactional
     public Client salvar(Client client) {
+        if (client == null) {
+            throw new IllegalArgumentException("Cliente não pode ser nulo");
+        }
         validarCpfUnico(client);
         validarContatosMinimos(client);
         validarEmailsMinimos(client);
@@ -46,6 +52,9 @@ public class ClientService {
 
     @Transactional
     public void excluir(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID não pode ser nulo");
+        }
         clientRepository.deleteById(id);
     }
 
