@@ -34,10 +34,10 @@ public class HealthCheckController {
     @Autowired
     private Environment env;
 
-    @Value("${spring.application.name}")
+    @Value("${spring.application.name:unknown}")
     private String applicationName;
 
-    @Value("${server.port}")
+    @Value("${server.port:8080}")
     private String serverPort;
 
     @Value("${spring.profiles.active:default}")
@@ -131,6 +131,9 @@ public class HealthCheckController {
         String[] criticalVars = {"DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD"};
 
         for (String var : criticalVars) {
+            if (var == null)
+                continue;
+
             String value = env.getProperty(var);
             if (value != null && !value.isEmpty()) {
                 // Mascara valores sensíveis
@@ -149,6 +152,9 @@ public class HealthCheckController {
         String[] optionalVars = {"SERVER_PORT", "SPRING_PROFILES_ACTIVE", "HIBERNATE_DDL_AUTO"};
 
         for (String var : optionalVars) {
+            if (var == null)
+                continue;
+
             String value = env.getProperty(var);
             if (value != null && !value.isEmpty()) {
                 variables.put(var, "✅ " + value);
