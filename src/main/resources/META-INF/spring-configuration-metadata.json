@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "cors.allowed.origins",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of allowed origins for CORS configuration. Used in CorsConfig to define which origins can access the API endpoints.",
+      "defaultValue": "http://localhost:3000,http://localhost:8080"
+    }
+  ]
+}
