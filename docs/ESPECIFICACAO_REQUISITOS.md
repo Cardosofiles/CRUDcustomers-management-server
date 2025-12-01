@@ -165,6 +165,8 @@ O sistema não deve logar dados sensíveis como CPF completo.
 
 ### 6.1 Diagrama de Casos de Uso
 
+<img src="images/diagram_usecase.png" alt="Diagrama Caso de Uso">
+
 ```plantuml
 @startuml
 left to right direction
