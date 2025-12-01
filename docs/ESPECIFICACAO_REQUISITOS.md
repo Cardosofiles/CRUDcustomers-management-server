@@ -6,9 +6,12 @@
 
 ### CAPA
 
-**Nome do Sistema:** CRUD Customers Management Server  
-**Analista Responsável:** João Batista, João Victor e Marcos Lima
+**Nome do Sistema:** CRUD Customers Management Server
+</br>
+**Analista Responsável:** João Batista, João Victor Oliveira e Marcos Lima
+</br>
 **Instituição:** Centro Universitário do Triângulo - UNITRI
+</br>
 **Disciplina:** Engenharia de Software (ESOF)
 
 ---
